@@ -12,9 +12,9 @@ export const profile = {
   objective:
     'Obter a primeira oportunidade profissional na área de desenvolvimento de software, aplicando e aprofundando, na prática, os conhecimentos técnicos adquiridos durante a graduação.',
   summary: [
-    'Desenvolvedor com foco na criação de soluções digitais modernas, funcionais e com boa experiência de usuário.',
-    'Estudante de Engenharia de Software na PUC Minas, atualmente no 2º período, ainda em fase inicial da formação e sem experiência profissional prévia.',
-    'Possui conhecimentos em HTML, CSS, JavaScript e Python, estuda Java atualmente e utiliza Git, GitHub, Visual Studio Code e terminal no desenvolvimento de projetos acadêmicos e pessoais. Fluente em inglês, com diploma Cambridge.',
+    'Sou desenvolvedor com foco na criação de soluções digitais modernas, funcionais e com boa experiência de usuário.',
+    'Estudo Engenharia de Software na PUC Minas e estou no 2º período. Ainda estou no início da formação e não tenho experiência profissional prévia.',
+    'Tenho conhecimentos em HTML, CSS, JavaScript e Python, estou estudando Java e uso Git, GitHub, Visual Studio Code e o terminal nos meus projetos acadêmicos e pessoais. Sou fluente em inglês, com diploma Cambridge.',
   ],
 }
 
