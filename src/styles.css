@@ -10,9 +10,9 @@
 
   /* cursores retrô em pixel art, no estilo dos sistemas antigos */
   --cursor-arrow: url('/cursors/cursor-arrow.png') 0 0, default;
-  --cursor-hand: url('/cursors/cursor-hand.png') 11 1, pointer;
-  --cursor-text: url('/cursors/cursor-text.png') 7 17, text;
-  --cursor-wait: url('/cursors/cursor-wait.png') 11 17, wait;
+  --cursor-hand: url('/cursors/cursor-hand.png') 5 0, pointer;
+  --cursor-text: url('/cursors/cursor-text.png') 3 8, text;
+  --cursor-wait: url('/cursors/cursor-wait.png') 5 8, wait;
 }
 
 * { box-sizing: border-box; }
