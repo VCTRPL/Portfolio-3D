@@ -167,7 +167,19 @@ input, textarea { cursor: var(--cursor-text); }
   animation: mobile-in .45s ease both;
 }
 .mobile-screen .site--page { border: 0; }
-.mobile-close { position: fixed; right: 14px; bottom: 14px; z-index: 71; box-shadow: 0 6px 24px rgba(0,0,0,.5); }
+.mobile-screen { overflow: hidden; }
+.mobile-close { position: fixed; right: 12px; top: 12px; z-index: 71; box-shadow: 0 6px 24px rgba(0,0,0,.5); }
+.mobile-screen:has(.xp-window:not(.is-min)) .mobile-close { display: none; }
+
+/* Área de trabalho em tela cheia no celular */
+.desktop--mobile { position: fixed; inset: 0; }
+.desktop--mobile .xp-window.is-max { height: calc(100% - 38px); }
+.desktop--mobile .xp-scroll { flex: 1; min-width: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.desktop--mobile .xp-scroll .site--page { min-height: 100%; }
+.desktop--mobile .start-menu { width: min(300px, 86vw); }
+.desktop--mobile .balloon { right: auto; left: 16px; top: 140px; bottom: auto; width: min(260px, calc(100vw - 32px)); }
+.desktop--mobile .balloon::after { right: auto; left: 30px; top: -10px; bottom: auto; border-top: 0; border-bottom: 10px solid #ffffe1; }
+.desktop--mobile .task-item { min-width: 0; }
 @keyframes mobile-in { from { opacity: 0; transform: scale(.96); filter: brightness(2); } }
 
 @media (max-width: 760px) {

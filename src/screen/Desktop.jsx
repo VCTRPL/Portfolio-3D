@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { RESUME_PDF } from '../content'
 import { useStore } from '../store'
 import ScreenSite from './ScreenSite'
@@ -69,7 +69,7 @@ function Wallpaper() {
  * Área de trabalho do "VictorOS": papel de parede de campo, um único
  * ícone (o terminal do portfólio), barra de tarefas e menu Iniciar.
  */
-export default function Desktop() {
+export default function Desktop({ mobile = false }) {
   const appOpen = useStore((s) => s.appOpen)
   const setAppOpen = useStore((s) => s.setAppOpen)
   const powerOff = useStore((s) => s.powerOff)
@@ -78,6 +78,20 @@ export default function Desktop() {
   const [maximized, setMaximized] = useState(false)
   const [minimized, setMinimized] = useState(false)
   const [tip, setTip] = useState(true)
+  // Toque duplo feito à mão: no celular o dblclick nem sempre dispara.
+  const lastTap = useRef(0)
+  const onIconTap = (e) => {
+    e.stopPropagation()
+    setStartOpen(false)
+    const now = Date.now()
+    if (now - lastTap.current < 450) {
+      lastTap.current = 0
+      openApp()
+    } else {
+      lastTap.current = now
+      setSelected(true)
+    }
+  }
 
   const openApp = () => {
     setAppOpen(true)
@@ -87,14 +101,13 @@ export default function Desktop() {
   }
 
   return (
-    <div className="desktop" onClick={() => { setSelected(false); setStartOpen(false) }}>
+    <div className={`desktop ${mobile ? 'desktop--mobile' : ''}`} onClick={() => { setSelected(false); setStartOpen(false) }}>
       <Wallpaper />
 
       <button
         type="button"
         className={`desk-icon ${selected ? 'is-selected' : ''}`}
-        onClick={(e) => { e.stopPropagation(); setSelected(true); setStartOpen(false) }}
-        onDoubleClick={(e) => { e.stopPropagation(); openApp() }}
+        onClick={onIconTap}
         onKeyDown={(e) => { if (e.key === 'Enter') openApp() }}
       >
         <TerminalIcon />
@@ -103,7 +116,7 @@ export default function Desktop() {
 
       {appOpen && (
         <section
-          className={`xp-window ${maximized ? 'is-max' : ''} ${minimized ? 'is-min' : ''}`}
+          className={`xp-window ${maximized || mobile ? 'is-max' : ''} ${minimized ? 'is-min' : ''}`}
           onClick={(e) => e.stopPropagation()}
           aria-label="Portfólio"
         >
@@ -117,7 +130,7 @@ export default function Desktop() {
             </div>
           </header>
           <div className="xp-body">
-            <ScreenSite embedded />
+            {mobile ? <div className="xp-scroll"><ScreenSite /></div> : <ScreenSite embedded />}
           </div>
         </section>
       )}
@@ -141,7 +154,7 @@ export default function Desktop() {
       {tip && !appOpen && (
         <div className="balloon" onClick={(e) => { e.stopPropagation(); setTip(false) }}>
           <strong>Bem-vindo!</strong>
-          Clique duas vezes em <b>Portfólio</b> para abrir meu currículo.
+          {mobile ? 'Toque duas vezes' : 'Clique duas vezes'} em <b>Portfólio</b> para abrir meu currículo.
         </div>
       )}
 

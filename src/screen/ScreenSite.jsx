@@ -46,9 +46,11 @@ export default function ScreenSite({ embedded = false }) {
     const body = bodyRef.current
     const el = body?.querySelector(`#sec-${id}`)
     if (!body || !el) return
-    // scrollTo no próprio container: scrollIntoView rolaria também a página
-    // por trás da cena 3D.
-    body.scrollTo({ top: el.offsetTop - 8, behavior: 'smooth' })
+    // Dentro do monitor quem rola é o próprio container (scrollIntoView
+    // rolaria também a página por trás da cena 3D). Fora dele (versão
+    // simples, celular) quem rola é a página ou a janela, aí scrollIntoView.
+    if (body.scrollHeight > body.clientHeight + 1) body.scrollTo({ top: el.offsetTop - 8, behavior: 'smooth' })
+    else el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [])
 
   const onScroll = useCallback(() => {

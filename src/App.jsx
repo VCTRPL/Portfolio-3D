@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react'
 import { RESUME_PDF } from './content'
 import { useStore } from './store'
 import ScreenSite from './screen/ScreenSite'
+import Desktop from './screen/Desktop'
 import { WEBGL } from './webgl'
 
 const Experience = lazy(() => import('./scene/Experience'))
@@ -119,7 +120,7 @@ export default function App() {
       <Hud onSimple={() => setSimple(true)} />
       {small && power === 'on' && focused && (
         <div className="mobile-screen">
-          <ScreenSite />
+          <Desktop mobile />
           <button type="button" className="mobile-close" onClick={() => useStore.getState().setFocused(false)}>voltar ao escritório</button>
         </div>
       )}
