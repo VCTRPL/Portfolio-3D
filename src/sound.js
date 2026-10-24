@@ -7,9 +7,29 @@ function audio() {
     if (!AC) return null
     ctx = new AC()
   }
-  if (ctx.state === 'suspended') ctx.resume()
+  if (ctx.state !== 'running') ctx.resume()
   return ctx
 }
+
+// Celulares só liberam o áudio dentro de um toque do usuário. No primeiro
+// toque/clique em qualquer lugar, cria o contexto e toca um som mudo para
+// destravar. No iPhone, a sessão "playback" faz os sons tocarem mesmo com
+// a chave de silencioso ligada (Safari 16.4+).
+function unlock() {
+  try {
+    if (navigator.audioSession) navigator.audioSession.type = 'playback'
+  } catch { /* navegador sem audioSession */ }
+  const ac = audio()
+  if (!ac) return
+  const src = ac.createBufferSource()
+  src.buffer = ac.createBuffer(1, 1, 22050)
+  src.connect(ac.destination)
+  src.start(0)
+  if (ac.state === 'running') {
+    ;['touchend', 'pointerdown', 'click', 'keydown'].forEach((t) => window.removeEventListener(t, unlock, true))
+  }
+}
+;['touchend', 'pointerdown', 'click', 'keydown'].forEach((t) => window.addEventListener(t, unlock, true))
 
 // Ruído curto filtrado + um "toc" grave: o estalo de um interruptor.
 function click({ freq = 2200, thump = 140, gain = 0.5, length = 0.05 } = {}) {
