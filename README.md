@@ -14,7 +14,7 @@ Feito com [Three.js](https://threejs.org/), usando [React Three Fiber](https://r
 - **Luminária**: clique nela para acender ou apagar (com som de interruptor).
 - **Teclado e mouse**: as teclas do teclado 3D afundam quando você digita, e o mouse acompanha o ponteiro e "clica".
 - **Cursor retrô** em pixel art (seta e mãozinha).
-- **Versão simples** (botão no topo ou `?simples` na URL): o mesmo site sem 3D. Ela também é usada automaticamente quando o navegador não tem WebGL ou está sem aceleração de hardware (o 3D ficaria travando). Para forçar o 3D, use `?3d` na URL. No celular, depois que o computador liga, o site abre em tela cheia para ficar legível.
+- **Versão simples** (botão no topo ou `?simples` na URL): o mesmo site sem 3D. Ela também é usada automaticamente quando o navegador não tem WebGL. Sem aceleração de hardware, a cena 3D abre na qualidade mais baixa. No celular, depois que o computador liga, o site abre em tela cheia para ficar legível.
 
 ## Desempenho
 

@@ -2,34 +2,16 @@ import { lazy, Suspense, useEffect, useState } from 'react'
 import { RESUME_PDF } from './content'
 import { useStore } from './store'
 import ScreenSite from './screen/ScreenSite'
+import { WEBGL } from './webgl'
 
 const Experience = lazy(() => import('./scene/Experience'))
 const Loader = lazy(() => import('./scene/Experience').then((m) => ({ default: m.Loader })))
 
-// 'hardware' | 'software' | 'none'. "software" é quando o navegador está
-// desenhando o 3D sem a placa de vídeo (ex.: aceleração de hardware
-// desligada no Chrome): aí a cena fica travando e vale mais a versão simples.
-function detectWebGL() {
-  try {
-    const c = document.createElement('canvas')
-    const gl = c.getContext('webgl2') || c.getContext('webgl')
-    if (!gl) return 'none'
-    const ext = gl.getExtension('WEBGL_debug_renderer_info')
-    const renderer = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)
-    gl.getExtension('WEBGL_lose_context')?.loseContext()
-    return /swiftshader|llvmpipe|softpipe|software|basic render/i.test(String(renderer)) ? 'software' : 'hardware'
-  } catch {
-    return 'none'
-  }
-}
-
-const WEBGL = detectWebGL()
 const supportsWebGL = () => WEBGL !== 'none'
 
 const startSimple = () => {
   const q = new URLSearchParams(window.location.search)
-  if (q.has('3d')) return false
-  return q.has('simples') || WEBGL !== 'hardware'
+  return q.has('simples') || WEBGL === 'none'
 }
 
 // Em telas pequenas, 1024px de site dentro do monitor ficariam ilegíveis:
@@ -119,11 +101,7 @@ export default function App() {
     return (
       <>
         <div className="simple-bar">
-          <span>
-            {WEBGL === 'software'
-              ? 'versão simples: seu navegador está sem aceleração de hardware, então o 3D ficaria travando'
-              : 'versão simples'}
-          </span>
+          <span>versão simples</span>
           {supportsWebGL() && <button type="button" onClick={() => setSimple(false)}>ver o escritório 3D</button>}
         </div>
         <ScreenSite />
