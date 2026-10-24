@@ -4,7 +4,7 @@
   --page-bg: #0a0c12;
   --hud-fg: #e9e4d8;
   --hud-dim: #a49f93;
-  --hud-panel: rgba(14, 15, 19, 0.72);
+  --hud-panel: rgba(14, 15, 19, 0.86);
   --hud-border: rgba(255, 255, 255, 0.12);
   --amber: #f0a93c;
 
@@ -36,6 +36,13 @@ input { cursor: text; }
 .crt input { cursor: text; }
 
 .scene-canvas { position: fixed !important; inset: 0; touch-action: none; }
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%);
+}
 
 /* -------- HUD -------- */
 .hud { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
@@ -53,7 +60,6 @@ input { cursor: text; }
   border-radius: 10px;
   background: var(--hud-panel);
   border: 1px solid var(--hud-border);
-  backdrop-filter: blur(6px);
   pointer-events: auto;
 }
 .hud-brand strong { font-family: var(--font-retro); font-size: 26px; font-weight: 400; line-height: 1; color: var(--amber); letter-spacing: .5px; }
@@ -71,7 +77,6 @@ input { cursor: text; }
   border-radius: 8px;
   padding: 8px 12px;
   text-decoration: none;
-  backdrop-filter: blur(6px);
   transition: border-color .15s, color .15s, background .15s, transform .12s;
 }
 .hud-btn:hover { border-color: rgba(255,255,255,.3); transform: translateY(-1px); }
@@ -91,14 +96,12 @@ input { cursor: text; }
   border-radius: 999px;
   background: var(--hud-panel);
   border: 1px solid var(--hud-border);
-  backdrop-filter: blur(6px);
   font-size: 12.5px;
   color: var(--hud-dim);
   white-space: nowrap;
-  animation: hint-in .6s ease both, hint-float 2.6s ease-in-out .6s infinite;
+  animation: hint-in .6s ease both;
 }
 @keyframes hint-in { from { opacity: 0; transform: translate(-50%, 8px); } }
-@keyframes hint-float { 50% { transform: translate(-50%, -4px); } }
 
 .scene-tag {
   font: 600 12px var(--font-mono);

@@ -15,6 +15,15 @@ Feito com [Three.js](https://threejs.org/), usando [React Three Fiber](https://r
 - **Cursor retrô** em pixel art (seta e mãozinha).
 - **Versão simples** (botão no topo ou `?simples` na URL): o mesmo site sem 3D. Ela também é usada automaticamente quando o navegador não tem WebGL. No celular, depois que o computador liga, o site abre em tela cheia para ficar legível.
 
+## Desempenho
+
+A cena foi feita para rodar em qualquer computador:
+
+- só é redesenhada quando algo se mexe (câmera, mouse, teclas, liga/desliga). Parada, desenha um quadro por segundo, só para o relógio da parede;
+- sem pós-processamento: os brilhos (LEDs, lâmpada) são sprites leves;
+- sombras calculadas uma vez só, e desligadas em máquinas fracas e celulares, que também usam resolução 1x (`src/scene/quality.js`);
+- teclado e estante desenhados com `InstancedMesh` (poucas chamadas de desenho).
+
 ## Rodando localmente
 
 ```bash

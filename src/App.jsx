@@ -123,6 +123,7 @@ export default function App() {
     <>
       <Suspense fallback={<div className="loader" />}>
         <Experience />
+        <div className="vignette" aria-hidden="true" />
         <Loader />
       </Suspense>
       <Hud onSimple={() => setSimple(true)} />

@@ -14,7 +14,7 @@ function canvas(w, h) {
 function toTexture(c, { repeat, srgb = true } = {}) {
   const t = new THREE.CanvasTexture(c)
   if (srgb) t.colorSpace = THREE.SRGBColorSpace
-  t.anisotropy = 8
+  t.anisotropy = 4
   if (repeat) {
     t.wrapS = t.wrapT = THREE.RepeatWrapping
     t.repeat.set(...repeat)
@@ -193,39 +193,6 @@ export const posterTexture = () => memo('poster', () => {
   g.font = '20px monospace'
   g.fillStyle = 'rgba(255,243,214,.75)'
   g.fillText('code · café · repeat', 256, 225)
-  return toTexture(c)
-})
-
-export const spineTexture = (label, color, seed) => memo(`spine-${label}-${color}`, () => {
-  const [c, g] = canvas(64, 256)
-  const r = rng(seed)
-  g.fillStyle = color
-  g.fillRect(0, 0, 64, 256)
-  g.fillStyle = 'rgba(255,255,255,.25)'
-  g.fillRect(0, 22, 64, 4); g.fillRect(0, 230, 64, 4)
-  if (r() > 0.4) { g.fillRect(0, 34, 64, 2); g.fillRect(0, 220, 64, 2) }
-  g.save()
-  g.translate(32, 128)
-  g.rotate(Math.PI / 2)
-  g.fillStyle = 'rgba(255,245,225,.9)'
-  g.font = 'bold 20px monospace'
-  g.textAlign = 'center'
-  g.textBaseline = 'middle'
-  g.fillText(label, 0, 0)
-  g.restore()
-  return toTexture(c)
-})
-
-export const keyLabelTexture = (label) => memo(`key-${label}`, () => {
-  const [c, g] = canvas(64, 64)
-  g.fillStyle = 'rgba(0,0,0,0)'
-  g.clearRect(0, 0, 64, 64)
-  g.fillStyle = '#3a342b'
-  const size = label.length > 2 ? 15 : 26
-  g.font = `600 ${size}px monospace`
-  g.textAlign = label.length > 2 ? 'left' : 'left'
-  g.textBaseline = 'top'
-  g.fillText(label, 9, 8)
   return toTexture(c)
 })
 

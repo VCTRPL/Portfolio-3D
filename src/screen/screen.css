@@ -339,18 +339,8 @@
     repeating-linear-gradient(to bottom, rgba(0,0,0,.13) 0 1px, transparent 1px 3px);
   box-shadow: inset 0 0 70px rgba(0,0,0,.65), inset 0 0 8px rgba(0,0,0,.9);
 }
-.crt-scanlines::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0;
-  height: 40%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.045) 50%, rgba(255,255,255,0));
-  animation: crt-sweep 7s linear infinite;
-}
-@keyframes crt-sweep { from { top: -40%; } to { top: 100%; } }
 .crt--booting .crt-scanlines, .crt--on .crt-scanlines, .crt--shutting .crt-scanlines { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
-  .crt-scanlines::after { animation: none; display: none; }
   .skill-fill { animation: none; }
 }

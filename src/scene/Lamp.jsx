@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { useStore } from '../store'
 import { clickable } from './clickable'
 import { lampPaint, metal } from './materials'
+import { approach } from './anim'
+import Glow from './Glow'
 
 // Cilindro entre dois pontos (os braços da luminária).
 function Rod({ from, to, radius = 0.008, material = lampPaint }) {
@@ -35,6 +37,8 @@ export default function Lamp() {
   const toggleLamp = useStore((s) => s.toggleLamp)
   const spot = useRef()
   const bulb = useRef()
+  const glow = useRef()
+  const invalidate = useThree((s) => s.invalidate)
   const head = useMemo(() => new THREE.Vector3(...HEAD), [])
 
   const shadeQuat = useMemo(() => {
@@ -53,8 +57,13 @@ export default function Lamp() {
   }, [])
 
   useFrame((_, dt) => {
-    if (spot.current) spot.current.intensity = THREE.MathUtils.damp(spot.current.intensity, lampOn ? 6 : 0, 14, dt)
-    if (bulb.current) bulb.current.emissiveIntensity = THREE.MathUtils.damp(bulb.current.emissiveIntensity, lampOn ? 6 : 0.05, 14, dt)
+    if (!spot.current || !bulb.current || !glow.current) return
+    const moving = [
+      approach(spot.current, 'intensity', lampOn ? 6 : 0, 14, dt, 0.01),
+      approach(bulb.current, 'emissiveIntensity', lampOn ? 2 : 0.05, 14, dt, 0.01),
+      approach(glow.current, 'opacity', lampOn ? 0.55 : 0, 14, dt, 0.005),
+    ].some(Boolean)
+    if (moving) invalidate()
   })
 
   const click = clickable(toggleLamp)
@@ -89,8 +98,9 @@ export default function Lamp() {
         </group>
         <mesh position={bulbPos}>
           <sphereGeometry args={[0.022, 24, 24]} />
-          <meshStandardMaterial ref={bulb} color="#fff6dc" emissive="#ffd9a0" emissiveIntensity={6} toneMapped={false} />
+          <meshStandardMaterial ref={bulb} color="#fff6dc" emissive="#ffd9a0" emissiveIntensity={2} toneMapped={false} />
         </mesh>
+        <Glow ref={glow} position={bulbPos} color="#ffc878" size={0.22} opacity={0.55} />
       </group>
       <spotLight
         ref={spot}
@@ -102,7 +112,7 @@ export default function Lamp() {
         decay={1.6}
         color="#ffcf8a"
         castShadow
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={[512, 512]}
         shadow-bias={-0.0004}
         shadow-normalBias={0.02}
       />

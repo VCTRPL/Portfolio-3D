@@ -1,12 +1,14 @@
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Html, RoundedBox } from '@react-three/drei'
 import { useStore } from '../store'
 import CRTScreen from '../screen/CRTScreen'
 import { clickable } from './clickable'
 import { beige, beigeDark, plasticBlack, slot } from './materials'
 import { labelTexture } from './textures'
+import { approach } from './anim'
+import Glow from './Glow'
 
 // Tela 4:3 do monitor, em metros. O site (1024×768 px) é escalado para caber.
 export const SCREEN = {
@@ -44,29 +46,33 @@ function useTubeHousing() {
   }, [])
 }
 
+const LED_COLORS = {
+  power: { color: '#0b3d0b', emissive: '#39ff5a' },
+  hdd: { color: '#5a3a00', emissive: '#ffae1a' },
+}
+
+// LED do painel. O de disco só pisca durante o boot, e só nesse momento a
+// cena é redesenhada continuamente.
 function Led({ position, power, kind }) {
   const mat = useRef()
+  const glow = useRef()
+  const invalidate = useThree((s) => s.invalidate)
+  const blinking = kind === 'hdd' && (power === 'booting' || power === 'warming')
   useFrame(({ clock }) => {
-    if (!mat.current) return
-    const on = power !== 'off'
-    let intensity = on ? 2.4 : 0.15
-    if (kind === 'hdd') {
-      intensity = power === 'booting' || power === 'warming'
-        ? (Math.sin(clock.elapsedTime * 37) > 0.2 ? 3 : 0.1)
-        : (on && Math.sin(clock.elapsedTime * 3.1) > 0.97 ? 2.5 : 0.1)
-    }
-    mat.current.emissiveIntensity = intensity
+    if (!mat.current || !glow.current) return
+    const on = kind === 'hdd' ? blinking && Math.sin(clock.elapsedTime * 37) > 0.2 : power !== 'off'
+    mat.current.emissiveIntensity = on ? 1.6 : 0.1
+    glow.current.opacity = on ? 0.8 : 0
+    if (blinking) invalidate()
   })
   return (
-    <mesh position={position}>
-      <boxGeometry args={[0.012, 0.005, 0.004]} />
-      <meshStandardMaterial
-        ref={mat}
-        color={kind === 'hdd' ? '#5a3a00' : '#0b3d0b'}
-        emissive={kind === 'hdd' ? '#ffae1a' : '#39ff5a'}
-        toneMapped={false}
-      />
-    </mesh>
+    <group position={position}>
+      <mesh>
+        <boxGeometry args={[0.012, 0.005, 0.004]} />
+        <meshStandardMaterial ref={mat} {...LED_COLORS[kind]} toneMapped={false} />
+      </mesh>
+      <Glow ref={glow} position={[0, 0, 0.004]} color={LED_COLORS[kind].emissive} size={0.03} opacity={0} />
+    </group>
   )
 }
 
@@ -87,16 +93,15 @@ export default function Computer() {
     else s.setFocused(true)
   }
 
-  // O vidro "acende" um pouco além da borda do site: a bloom faz o brilho
-  // vazar para a moldura, e uma luz fria ilumina o teclado.
+  // O vidro "acende" um pouco além da borda do site, e uma luz fria
+  // ilumina o teclado.
+  const invalidate = useThree((s) => s.invalidate)
   useFrame((_, dt) => {
+    if (!glassMat.current || !screenLight.current) return
     const lit = power === 'on' ? 1 : power === 'booting' ? 0.7 : power === 'warming' ? 1.4 : 0
-    if (glassMat.current) {
-      glassMat.current.emissiveIntensity = THREE.MathUtils.damp(glassMat.current.emissiveIntensity, lit * 0.55, 8, dt)
-    }
-    if (screenLight.current) {
-      screenLight.current.intensity = THREE.MathUtils.damp(screenLight.current.intensity, lit * 0.35, 8, dt)
-    }
+    const a = approach(glassMat.current, 'emissiveIntensity', lit * 0.55, 8, dt, 0.002)
+    const b = approach(screenLight.current, 'intensity', lit * 0.35, 8, dt, 0.002)
+    if (a || b) invalidate()
   })
 
   return (
@@ -163,15 +168,13 @@ export default function Computer() {
         position={[SCREEN.center.x, SCREEN.center.y, SCREEN.center.z - 0.001]}
         {...clickable(onGlassClick)}
       >
-        <meshPhysicalMaterial
+        <meshStandardMaterial
           ref={glassMat}
           color="#0e1512"
           emissive="#9fd0c0"
           emissiveIntensity={0}
-          roughness={0.12}
-          metalness={0.1}
-          clearcoat={1}
-          clearcoatRoughness={0.05}
+          roughness={0.08}
+          metalness={0.3}
         />
       </mesh>
       <pointLight ref={screenLight} position={[0, 1.1, 0.35]} color="#a8d8ff" intensity={0} distance={1.4} decay={2} />

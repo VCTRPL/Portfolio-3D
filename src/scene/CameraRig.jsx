@@ -11,12 +11,14 @@ const OVERVIEW_TARGET = new THREE.Vector3(-0.05, 1.0, -0.1)
 // Começa longe e "entra" no escritório ao carregar.
 export default function CameraRig() {
   const focused = useStore((s) => s.focused)
-  const { camera, size } = useThree()
+  const { camera, size, invalidate } = useThree()
   const look = useMemo(() => OVERVIEW_TARGET.clone().add(new THREE.Vector3(0.4, 0.3, 0)), [])
   const pos = useMemo(() => new THREE.Vector3(), [])
   const target = useMemo(() => new THREE.Vector3(), [])
 
-  useFrame(({ pointer }, dt) => {
+  useFrame(({ pointer }, delta) => {
+    // com frameloop="demand", o delta depois de um tempo parado pode ser enorme
+    const dt = Math.min(delta, 0.1)
     const aspect = size.width / size.height
     const fov = THREE.MathUtils.degToRad(camera.fov)
     const tanHalf = Math.tan(fov / 2)
@@ -37,9 +39,10 @@ export default function CameraRig() {
       target.copy(OVERVIEW_TARGET)
     }
 
-    easing.damp3(camera.position, pos, focused ? 0.45 : 0.7, dt)
-    easing.damp3(look, target, focused ? 0.35 : 0.6, dt)
+    const moving = easing.damp3(camera.position, pos, focused ? 0.45 : 0.7, dt, Infinity, undefined, 0.0002)
+    const turning = easing.damp3(look, target, focused ? 0.35 : 0.6, dt, Infinity, undefined, 0.0002)
     camera.lookAt(look)
+    if (moving || turning) invalidate()
   })
 
   return null

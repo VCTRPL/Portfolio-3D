@@ -10,7 +10,7 @@ import { labelTexture } from './textures'
 function Resume() {
   const tex = useTexture('/textures/resume.jpg')
   tex.colorSpace = THREE.SRGBColorSpace
-  tex.anisotropy = 8
+  tex.anisotropy = 4
   const [hover, setHover] = useState(false)
   const base = clickable(openResume)
   const handlers = {

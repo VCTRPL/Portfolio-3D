@@ -1,8 +1,8 @@
 import { Suspense, useEffect } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import { Environment, Lightformer, useProgress } from '@react-three/drei'
-import { Bloom, EffectComposer, Vignette, Noise } from '@react-three/postprocessing'
 import { useStore } from '../store'
+import { QUALITY } from './quality'
 import CameraRig from './CameraRig'
 import Computer from './Computer'
 import Desk, { DESK_TOP } from './Desk'
@@ -12,9 +12,36 @@ import Mouse from './Mouse'
 import Props from './Props'
 import Room from './Room'
 
+// A cena só é desenhada quando algo muda (frameloop="demand"). Cada
+// animação pede o próximo quadro com invalidate() enquanto está andando;
+// aqui ficam os gatilhos globais: mover o ponteiro e redimensionar.
+function DemandTriggers() {
+  const invalidate = useThree((s) => s.invalidate)
+  useEffect(() => {
+    const on = () => invalidate()
+    window.addEventListener('pointermove', on, { passive: true })
+    window.addEventListener('resize', on)
+    const unsub = useStore.subscribe(on)
+    return () => {
+      window.removeEventListener('pointermove', on)
+      window.removeEventListener('resize', on)
+      unsub()
+    }
+  }, [invalidate])
+  return null
+}
+
 function Ready() {
   const setReady = useStore((s) => s.setReady)
-  useEffect(() => { setReady() }, [setReady])
+  const gl = useThree((s) => s.gl)
+  const invalidate = useThree((s) => s.invalidate)
+  useEffect(() => {
+    // Nada que projeta sombra se mexe: o mapa de sombras é calculado uma vez.
+    gl.shadowMap.needsUpdate = true
+    invalidate()
+    setReady()
+    if (new URLSearchParams(window.location.search).has('debug')) window.__gl = gl
+  }, [gl, invalidate, setReady])
   return null
 }
 
@@ -36,9 +63,11 @@ export default function Experience() {
   return (
     <Canvas
       className="scene-canvas"
-      shadows
-      dpr={[1, 2]}
-      gl={{ antialias: true, powerPreference: 'high-performance' }}
+      frameloop="demand"
+      shadows={QUALITY.shadows}
+      dpr={QUALITY.dpr}
+      gl={{ antialias: true, powerPreference: 'default', stencil: false }}
+      onCreated={({ gl }) => { gl.shadowMap.autoUpdate = false }}
       camera={{ fov: 40, near: 0.01, far: 30, position: [2.4, 2.1, 4.2] }}
       onPointerMissed={() => useStore.getState().setFocused(false)}
     >
@@ -46,10 +75,8 @@ export default function Experience() {
       <fog attach="fog" args={['#0a0c12', 5, 11]} />
 
       {/* luz geral fria da noite + luar entrando pela janela */}
-      <hemisphereLight args={['#6d7fa8', '#2a1f18', 0.55]} />
-      <ambientLight intensity={0.12} />
+      <hemisphereLight args={['#8090b8', '#3a2c22', 0.95]} />
       <directionalLight position={[-2.2, 2.6, -2.5]} intensity={0.55} color="#9fb4ff" />
-      <pointLight position={[0.6, 2.5, 1.6]} intensity={1.4} distance={5} decay={2} color="#ffe2bd" />
 
       <Suspense fallback={null}>
         <Room />
@@ -59,7 +86,7 @@ export default function Experience() {
         <Mouse />
         <Lamp />
         <Props />
-        <Environment resolution={128} frames={1}>
+        <Environment resolution={64} frames={1}>
           <Lightformer form="rect" intensity={1.2} color="#ffd9a8" position={[0, 3, 2]} scale={[4, 2, 1]} />
           <Lightformer form="rect" intensity={0.6} color="#8fa8ff" position={[-3, 1.5, -2]} scale={[2, 2, 1]} />
           <Lightformer form="circle" intensity={1.5} color="#ffffff" position={[2, 2, 3]} scale={1} />
@@ -68,12 +95,7 @@ export default function Experience() {
       </Suspense>
 
       <CameraRig />
-
-      <EffectComposer multisampling={4}>
-        <Bloom mipmapBlur luminanceThreshold={0.9} luminanceSmoothing={0.2} intensity={0.7} radius={0.7} />
-        <Noise opacity={0.025} />
-        <Vignette offset={0.25} darkness={0.75} />
-      </EffectComposer>
+      <DemandTriggers />
     </Canvas>
   )
 }
