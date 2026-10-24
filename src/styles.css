@@ -8,9 +8,11 @@
   --hud-border: rgba(255, 255, 255, 0.12);
   --amber: #f0a93c;
 
-  /* cursor retrô (pixel art) do portfólio original */
-  --cursor-arrow: url('/cursors/cursor-arrow.png') 1 1, default;
-  --cursor-hand: url('/cursors/cursor-hand.png') 14 2, pointer;
+  /* cursores retrô em pixel art, no estilo dos sistemas antigos */
+  --cursor-arrow: url('/cursors/cursor-arrow.png') 0 0, default;
+  --cursor-hand: url('/cursors/cursor-hand.png') 11 1, pointer;
+  --cursor-text: url('/cursors/cursor-text.png') 7 17, text;
+  --cursor-wait: url('/cursors/cursor-wait.png') 11 17, wait;
 }
 
 * { box-sizing: border-box; }
@@ -30,10 +32,13 @@ body.is-simple { overflow: auto; }
 body.is-pointer, body.is-pointer * { cursor: var(--cursor-hand) !important; }
 
 a, button, .tab, [role="button"], label { cursor: var(--cursor-hand); }
-input { cursor: text; }
+input, textarea { cursor: var(--cursor-text); }
 .crt, .crt * { cursor: var(--cursor-arrow); }
 .crt a, .crt button, .crt .tab { cursor: var(--cursor-hand); }
-.crt input { cursor: text; }
+.crt input { cursor: var(--cursor-text); }
+.crt .desk-icon { cursor: var(--cursor-arrow); }
+.crt--warming, .crt--warming *, .crt--booting, .crt--booting * { cursor: var(--cursor-wait) !important; }
+.loader { cursor: var(--cursor-wait); }
 
 .scene-canvas { position: fixed !important; inset: 0; touch-action: none; }
 .vignette {
