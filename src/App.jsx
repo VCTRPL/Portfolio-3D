@@ -6,18 +6,30 @@ import ScreenSite from './screen/ScreenSite'
 const Experience = lazy(() => import('./scene/Experience'))
 const Loader = lazy(() => import('./scene/Experience').then((m) => ({ default: m.Loader })))
 
-function supportsWebGL() {
+// 'hardware' | 'software' | 'none'. "software" é quando o navegador está
+// desenhando o 3D sem a placa de vídeo (ex.: aceleração de hardware
+// desligada no Chrome): aí a cena fica travando e vale mais a versão simples.
+function detectWebGL() {
   try {
     const c = document.createElement('canvas')
-    return !!(window.WebGL2RenderingContext && c.getContext('webgl2')) || !!c.getContext('webgl')
+    const gl = c.getContext('webgl2') || c.getContext('webgl')
+    if (!gl) return 'none'
+    const ext = gl.getExtension('WEBGL_debug_renderer_info')
+    const renderer = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)
+    gl.getExtension('WEBGL_lose_context')?.loseContext()
+    return /swiftshader|llvmpipe|softpipe|software|basic render/i.test(String(renderer)) ? 'software' : 'hardware'
   } catch {
-    return false
+    return 'none'
   }
 }
 
+const WEBGL = detectWebGL()
+const supportsWebGL = () => WEBGL !== 'none'
+
 const startSimple = () => {
   const q = new URLSearchParams(window.location.search)
-  return q.has('simples') || !supportsWebGL()
+  if (q.has('3d')) return false
+  return q.has('simples') || WEBGL !== 'hardware'
 }
 
 // Em telas pequenas, 1024px de site dentro do monitor ficariam ilegíveis:
@@ -45,7 +57,6 @@ function Hud({ onSimple }) {
   let hint = null
   if (ready && power === 'off') hint = 'Clique no monitor ou no botão ⏻ para ligar o computador'
   else if (power === 'on' && !focused) hint = 'Clique na tela para aproximar'
-  else if (power === 'on' && focused) hint = 'Esc ou clique fora da tela para afastar'
 
   return (
     <div className="hud">
@@ -87,20 +98,17 @@ export default function App() {
     document.body.classList.toggle('is-simple', simple)
   }, [simple])
 
-  // Atalhos: E liga/desliga (fora de campos de texto), Esc afasta a câmera.
+  // Atalhos: Esc pula o boot ou afasta a câmera; Enter pula o boot.
   useEffect(() => {
     if (simple) return undefined
     const onKey = (e) => {
-      const typing = e.target instanceof HTMLElement && e.target.closest('input, textarea, [contenteditable]')
       const s = useStore.getState()
       if (e.key === 'Escape') {
-        if (s.power === 'booting') useStore.setState({ power: 'on' })
+        if (s.power === 'booting') s.skipBoot()
         else s.setFocused(false)
         e.target.blur?.()
-      } else if (!typing && (e.key === 'e' || e.key === 'E') && !e.repeat) {
-        s.togglePower()
-      } else if (!typing && e.key === 'Enter' && s.power === 'booting') {
-        useStore.setState({ power: 'on' })
+      } else if (e.key === 'Enter' && s.power === 'booting') {
+        s.skipBoot()
       }
     }
     window.addEventListener('keydown', onKey)
@@ -111,7 +119,11 @@ export default function App() {
     return (
       <>
         <div className="simple-bar">
-          <span>versão simples</span>
+          <span>
+            {WEBGL === 'software'
+              ? 'versão simples: seu navegador está sem aceleração de hardware, então o 3D ficaria travando'
+              : 'versão simples'}
+          </span>
           {supportsWebGL() && <button type="button" onClick={() => setSimple(false)}>ver o escritório 3D</button>}
         </div>
         <ScreenSite />

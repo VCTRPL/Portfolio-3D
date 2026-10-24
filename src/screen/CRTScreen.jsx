@@ -1,5 +1,5 @@
 import { useStore, BOOT_MS } from '../store'
-import ScreenSite from './ScreenSite'
+import Desktop from './Desktop'
 
 const BOOT_LINES = [
   'VP-BIOS (C) 1989 Victor Paula Systems, Inc.',
@@ -7,29 +7,24 @@ const BOOT_LINES = [
   'Memória base: 640K .................... OK',
   'Detectando unidades: A: 3½"  C: HD 20MB  OK',
   '',
-  'C:\\> cd PORTFOLIO',
-  'C:\\PORTFOLIO> montando /sobre /skills /projetos /contato',
-  'C:\\PORTFOLIO> conectando a github.com/VCTRPL ... OK',
-  'C:\\PORTFOLIO> iniciando victor@portfolio_',
+  'Iniciando VictorOS...',
+  'Carregando área de trabalho ............ OK',
 ]
 
-/** Tela do CRT: animações de liga/desliga, boot e o site do currículo. */
+/** Tela do CRT: animações de liga/desliga, boot e a área de trabalho. */
 export default function CRTScreen() {
   const power = useStore((s) => s.power)
   const focused = useStore((s) => s.focused)
-
-  const skipBoot = () => {
-    if (useStore.getState().power === 'booting') useStore.setState({ power: 'on' })
-  }
+  const skipBoot = useStore((s) => s.skipBoot)
 
   return (
     <div className={`crt crt--${power} ${focused ? 'crt--focused' : ''}`} style={{ '--boot-ms': `${BOOT_MS}ms` }}>
       <div className="crt-content">
-        <ScreenSite embedded />
+        {(power === 'on' || power === 'shutting') && <Desktop />}
         {power === 'booting' && (
           <div className="crt-boot" onClick={skipBoot} role="presentation">
             {BOOT_LINES.map((l, i) => (
-              <p key={i} style={{ animationDelay: `${i * (BOOT_MS / (BOOT_LINES.length + 1))}ms` }}>{l || '\u00a0'}</p>
+              <p key={i} style={{ animationDelay: `${i * (BOOT_MS / (BOOT_LINES.length + 1))}ms` }}>{l || ' '}</p>
             ))}
             <span className="crt-boot-skip">clique para pular</span>
           </div>

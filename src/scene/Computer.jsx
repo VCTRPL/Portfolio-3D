@@ -34,6 +34,45 @@ function useCurvedGlass(w, h, bulge) {
   }, [w, h, bulge])
 }
 
+// Máscara por cima da tela: cantos arredondados de tubo, bordas escurecidas
+// e um reflexo suave de vidro.
+function useScreenBezelShade() {
+  return useMemo(() => {
+    const W = 512
+    const H = 384
+    const c = document.createElement('canvas')
+    c.width = W
+    c.height = H
+    const g = c.getContext('2d')
+    g.fillStyle = '#000'
+    g.fillRect(0, 0, W, H)
+    g.globalCompositeOperation = 'destination-out'
+    g.shadowColor = '#000'
+    g.shadowBlur = 6
+    g.beginPath()
+    g.roundRect(4, 4, W - 8, H - 8, 18)
+    g.fill()
+    g.globalCompositeOperation = 'source-over'
+    g.shadowBlur = 0
+    const v = g.createRadialGradient(W / 2, H / 2, H * 0.3, W / 2, H / 2, W * 0.62)
+    v.addColorStop(0, 'rgba(0,0,0,0)')
+    v.addColorStop(1, 'rgba(0,0,0,0.3)')
+    g.fillStyle = v
+    g.fillRect(0, 0, W, H)
+    const r = g.createLinearGradient(0, 0, W * 0.55, H * 0.7)
+    r.addColorStop(0, 'rgba(255,255,255,0.10)')
+    r.addColorStop(0.45, 'rgba(255,255,255,0.03)')
+    r.addColorStop(0.46, 'rgba(255,255,255,0)')
+    g.fillStyle = r
+    g.beginPath()
+    g.ellipse(W * 0.22, H * 0.12, W * 0.42, H * 0.3, -0.25, 0, Math.PI * 2)
+    g.fill()
+    const t = new THREE.CanvasTexture(c)
+    t.colorSpace = THREE.SRGBColorSpace
+    return t
+  }, [])
+}
+
 // Caixa traseira do CRT: um tronco de pirâmide que afina para trás.
 function useTubeHousing() {
   return useMemo(() => {
@@ -80,7 +119,8 @@ export default function Computer() {
   const power = useStore((s) => s.power)
   const focused = useStore((s) => s.focused)
   const togglePower = useStore((s) => s.togglePower)
-  const glassGeo = useCurvedGlass(SCREEN.width + 0.006, SCREEN.height + 0.006, 0.006)
+  const glassGeo = useCurvedGlass(SCREEN.width + 0.02, SCREEN.height + 0.02, 0.006)
+  const bezelShade = useScreenBezelShade()
   const housing = useTubeHousing()
   const glassMat = useRef()
   const screenLight = useRef()
@@ -156,7 +196,7 @@ export default function Computer() {
         </mesh>
         <Led position={[0.14, -0.163, 0.091]} power={power} kind="power" />
         {/* post-it */}
-        <mesh position={[0.185, 0.14, 0.0915]} rotation={[0, 0, -0.12]}>
+        <mesh position={[0.188, 0.142, 0.0945]} rotation={[0, 0, -0.12]}>
           <planeGeometry args={[0.06, 0.06]} />
           <meshStandardMaterial map={sticky} roughness={0.9} />
         </mesh>
@@ -165,13 +205,13 @@ export default function Computer() {
       {/* vidro do tubo: escuro desligado, brilha ligado */}
       <mesh
         geometry={glassGeo}
-        position={[SCREEN.center.x, SCREEN.center.y, SCREEN.center.z - 0.001]}
+        position={[SCREEN.center.x, SCREEN.center.y, SCREEN.center.z - 0.007]}
         {...clickable(onGlassClick)}
       >
         <meshStandardMaterial
           ref={glassMat}
           color="#0e1512"
-          emissive="#9fd0c0"
+          emissive="#3a6a5c"
           emissiveIntensity={0}
           roughness={0.08}
           metalness={0.3}
@@ -179,10 +219,14 @@ export default function Computer() {
       </mesh>
       <pointLight ref={screenLight} position={[0, 1.1, 0.35]} color="#a8d8ff" intensity={0} distance={1.4} decay={2} />
 
-      {/* o site do currículo, renderizado como DOM de verdade dentro da tela */}
+      {/* A tela (DOM de verdade) fica ATRÁS do canvas: com occlude="blending"
+          o drei abre um "buraco" transparente no 3D do tamanho da tela. Assim
+          a moldura, o post-it e o reflexo do vidro ficam por cima dela, como
+          num monitor de verdade. Desligado, o vidro escuro volta a aparecer. */}
       <Html
         transform
-        position={[SCREEN.center.x, SCREEN.center.y, SCREEN.center.z + 0.005]}
+        occlude={power === 'off' ? false : 'blending'}
+        position={[SCREEN.center.x, SCREEN.center.y, SCREEN.center.z + 0.0005]}
         scale={HTML_SCALE}
         zIndexRange={[10, 0]}
         pointerEvents={focused && power !== 'off' ? 'auto' : 'none'}
@@ -190,6 +234,11 @@ export default function Computer() {
       >
         <CRTScreen />
       </Html>
+      {/* cantos arredondados do tubo, vinheta e reflexo, por cima da tela */}
+      <mesh position={[SCREEN.center.x, SCREEN.center.y, SCREEN.center.z + 0.0015]} visible={power !== 'off'}>
+        <planeGeometry args={[SCREEN.width + 0.002, SCREEN.height + 0.002]} />
+        <meshBasicMaterial map={bezelShade} transparent depthWrite={false} toneMapped={false} />
+      </mesh>
     </group>
   )
 }

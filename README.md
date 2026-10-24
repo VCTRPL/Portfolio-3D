@@ -7,13 +7,14 @@ Feito com [Three.js](https://threejs.org/), usando [React Three Fiber](https://r
 
 ## O que dá para fazer
 
-- **Ligar/desligar o computador**: clique no monitor, no botão ⏻ do gabinete ou do monitor, no botão "ligar" do topo, ou aperte `E`. A tela tem a animação de CRT ligando (linha branca abrindo), um boot estilo BIOS/DOS e o colapso num ponto quando desliga.
-- **Usar o site dentro da tela**: tem abas, rolagem, os repositórios do GitHub carregados ao vivo e um shell interativo (`help`, `pdf`, `lampada`, `desligar`…).
+- **Ligar/desligar o computador**: clique no monitor, no botão ⏻ do gabinete ou do monitor, ou no botão "ligar" do topo, com som de clique. A tela tem a animação de CRT ligando (linha branca abrindo), um boot estilo BIOS e o colapso num ponto quando desliga.
+- **Área de trabalho retrô**: depois do boot aparece o "VictorOS", com papel de parede de campo, barra de tarefas, menu iniciar e um único app: o **Portfólio**. Clique duas vezes nele para abrir o terminal do currículo numa janela.
+- **Usar o site dentro da janela**: tem abas, rolagem, os repositórios do GitHub carregados ao vivo e um shell interativo (`help`, `pdf`, `lampada`, `desligar`…). A tela fica de verdade atrás do vidro do monitor: a moldura, o post-it e o reflexo do vidro ficam por cima dela.
 - **Currículo em PDF**: abre pela folha em cima da mesa, pelo botão "currículo PDF" ou pelos links do site.
-- **Luminária**: clique nela para acender ou apagar.
+- **Luminária**: clique nela para acender ou apagar (com som de interruptor).
 - **Teclado e mouse**: as teclas do teclado 3D afundam quando você digita, e o mouse acompanha o ponteiro e "clica".
 - **Cursor retrô** em pixel art (seta e mãozinha).
-- **Versão simples** (botão no topo ou `?simples` na URL): o mesmo site sem 3D. Ela também é usada automaticamente quando o navegador não tem WebGL. No celular, depois que o computador liga, o site abre em tela cheia para ficar legível.
+- **Versão simples** (botão no topo ou `?simples` na URL): o mesmo site sem 3D. Ela também é usada automaticamente quando o navegador não tem WebGL ou está sem aceleração de hardware (o 3D ficaria travando). Para forçar o 3D, use `?3d` na URL. No celular, depois que o computador liga, o site abre em tela cheia para ficar legível.
 
 ## Desempenho
 

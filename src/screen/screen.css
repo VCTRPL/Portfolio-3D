@@ -250,7 +250,7 @@
   position: relative;
   width: 1024px;
   height: 768px;
-  border-radius: 34px / 30px;
+  border-radius: 20px;
   overflow: hidden;
   background: transparent;
   transition: background .2s;
@@ -270,8 +270,7 @@
 
 .crt--booting .crt-content,
 .crt--on .crt-content { opacity: 1; }
-.crt--booting .site { visibility: hidden; }
-.crt--on .site { animation: crt-on .5s ease-out both; }
+.crt--on .desktop { animation: crt-on .5s ease-out both; }
 
 @keyframes crt-on {
   0% { filter: brightness(2.2) saturate(.4); opacity: 0; }
@@ -344,3 +343,247 @@
 @media (prefers-reduced-motion: reduce) {
   .skill-fill { animation: none; }
 }
+
+/* =========================================================
+   Área de trabalho do "VictorOS" (estilo Windows antigo)
+   ========================================================= */
+.desktop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: Tahoma, Verdana, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  color: #fff;
+  user-select: none;
+}
+.wallpaper { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.desk-icon {
+  position: absolute;
+  left: 22px;
+  top: 22px;
+  width: 104px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px;
+  background: transparent;
+  border: 1px dotted transparent;
+  color: #fff;
+}
+.desk-icon:focus-visible { outline: none; border-color: rgba(255,255,255,.8); }
+.desk-icon-label {
+  font-size: 15px;
+  line-height: 1.2;
+  padding: 1px 4px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,.85);
+}
+.desk-icon.is-selected .desk-icon-label { background: #316ac5; text-shadow: none; }
+.desk-icon.is-selected .term-icon { filter: brightness(.75) sepia(1) hue-rotate(180deg) saturate(3); }
+
+.term-icon {
+  position: relative;
+  width: 60px;
+  height: 52px;
+  border-radius: 6px;
+  background: #101418;
+  border: 2px solid #c9ced6;
+  box-shadow: 2px 3px 6px rgba(0,0,0,.45);
+  overflow: hidden;
+  display: block;
+}
+.term-icon-bar { position: absolute; left: 0; right: 0; top: 0; height: 9px; background: linear-gradient(#3d8cf0, #1e5fc4); }
+.term-icon-prompt {
+  position: absolute;
+  left: 6px;
+  bottom: 3px;
+  font: 700 20px var(--font-mono);
+  color: #7fe0c4;
+}
+.term-icon--small { width: 18px; height: 16px; border-width: 1px; border-radius: 3px; box-shadow: none; flex: 0 0 auto; }
+.term-icon--small .term-icon-bar { height: 4px; }
+.term-icon--small .term-icon-prompt { font-size: 7px; left: 2px; bottom: 0; }
+
+/* Janela */
+.xp-window {
+  position: absolute;
+  left: 36px;
+  top: 18px;
+  width: 952px;
+  height: 680px;
+  display: flex;
+  flex-direction: column;
+  background: #0054e3;
+  border: 1px solid #0831d9;
+  border-radius: 8px 8px 0 0;
+  padding: 0 3px 3px;
+  box-shadow: 4px 6px 18px rgba(0,0,0,.45);
+  animation: win-open .18s ease-out both;
+}
+.xp-window.is-max { left: 0; top: 0; width: 100%; height: calc(100% - 38px); border-radius: 0; }
+.xp-window.is-min { display: none; }
+@keyframes win-open { from { transform: scale(.92); opacity: 0; } }
+.xp-titlebar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 4px 0 6px;
+  background: linear-gradient(#3a8cf8 0%, #0a5ce8 12%, #0352d6 50%, #0348c4 88%, #0b3fb0 100%);
+  border-radius: 7px 7px 0 0;
+}
+.xp-title { flex: 1; font-weight: 700; font-size: 13px; text-shadow: 1px 1px 1px #0a2a7a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xp-buttons { display: flex; gap: 3px; }
+.xp-btn {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  font: 700 12px Tahoma, sans-serif;
+  color: #fff;
+  background: linear-gradient(#5c9bff, #2361e0);
+  border: 1px solid #fff;
+  border-radius: 3px;
+  padding: 0;
+  line-height: 1;
+}
+.xp-btn:hover { filter: brightness(1.15); }
+.xp-btn--close { background: linear-gradient(#e9774f, #c4381b); }
+.xp-body { flex: 1; min-height: 0; display: flex; background: #0f1213; }
+.xp-body .site { font-size: 14px; }
+
+/* Barra de tarefas */
+.taskbar {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 38px;
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(#3168d5 0%, #4993e6 8%, #2157d7 40%, #1f4fc8 90%, #1941a5 100%);
+  border-top: 1px solid #0c3aa6;
+}
+.start-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 22px 0 12px;
+  font: italic 700 19px Tahoma, Verdana, sans-serif;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,.5);
+  background: linear-gradient(#3c9a3c 0%, #5fc35f 10%, #3a9a35 50%, #2e862b 100%);
+  border: 0;
+  border-radius: 0 12px 12px 0;
+  box-shadow: inset -1px 0 2px rgba(0,0,0,.35);
+}
+.start-btn:hover, .start-btn.is-open { filter: brightness(1.1); }
+.start-flag {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff6b0, #ffb52e 55%, #e46d0c);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.35);
+}
+.task-items { flex: 1; display: flex; align-items: center; gap: 4px; padding: 0 8px; }
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  min-width: 170px;
+  padding: 0 10px;
+  font: 13px Tahoma, Verdana, sans-serif;
+  color: #fff;
+  background: linear-gradient(#3c81f3, #2463d9);
+  border: 1px solid #1a49b5;
+  border-radius: 3px;
+}
+.task-item.is-active { background: linear-gradient(#1e4fbd, #1a47ac); box-shadow: inset 1px 1px 3px rgba(0,0,0,.45); }
+.tray {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: linear-gradient(#0f8ff0, #1290e8 50%, #0b78d8);
+  border-left: 1px solid #0b4fb3;
+  box-shadow: inset 1px 0 1px rgba(255,255,255,.3);
+}
+.tray-clock { font-size: 13px; }
+
+/* Menu Iniciar */
+.start-menu {
+  position: absolute;
+  left: 0;
+  bottom: 38px;
+  width: 300px;
+  background: #fff;
+  color: #222;
+  border: 1px solid #0b3fb0;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  box-shadow: 3px 3px 12px rgba(0,0,0,.45);
+}
+.start-menu-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: #fff;
+  font-size: 15px;
+  background: linear-gradient(#1f63d9, #3d86ea);
+}
+.start-avatar {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border: 2px solid #fff; border-radius: 5px;
+  background: #0f1213; color: #f0a93c;
+  font: 700 15px var(--font-mono);
+}
+.start-menu ul { list-style: none; margin: 0; padding: 6px; }
+.start-menu li button, .start-menu li a, .start-menu-foot button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  font: 13px Tahoma, Verdana, sans-serif;
+  color: #222;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+}
+.start-menu li button:hover, .start-menu li a:hover { background: #316ac5; color: #fff; }
+.pdf-icon { width: 18px; height: 16px; display: grid; place-items: center; background: #d63a2a; color: #fff; font: 700 7px Tahoma, sans-serif; border-radius: 2px; }
+.start-menu-foot { display: flex; justify-content: flex-end; padding: 6px; background: linear-gradient(#3d86ea, #1f63d9); }
+.start-menu-foot button { width: auto; color: #fff; }
+.start-menu-foot button:hover { background: rgba(255,255,255,.15); }
+.off-icon { width: 20px; height: 20px; display: grid; place-items: center; background: #e2582f; border-radius: 3px; font-size: 12px; }
+
+/* Balão de dica na bandeja */
+.balloon {
+  position: absolute;
+  right: 12px;
+  bottom: 50px;
+  width: 260px;
+  padding: 10px 12px;
+  background: #ffffe1;
+  color: #222;
+  border: 1px solid #555;
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  box-shadow: 2px 2px 6px rgba(0,0,0,.3);
+  animation: balloon-in .4s ease-out .5s both;
+}
+.balloon strong { display: block; margin-bottom: 2px; }
+.balloon::after {
+  content: "";
+  position: absolute;
+  right: 30px;
+  bottom: -10px;
+  border: 10px solid transparent;
+  border-top-color: #ffffe1;
+  border-bottom: 0;
+}
+@keyframes balloon-in { from { opacity: 0; transform: translateY(6px); } }
