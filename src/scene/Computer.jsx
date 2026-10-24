@@ -136,6 +136,10 @@ export default function Computer() {
   // O vidro "acende" um pouco além da borda do site, e uma luz fria
   // ilumina o teclado.
   const invalidate = useThree((s) => s.invalidate)
+  // O <Html> só pode montar depois que os eventos do canvas conectaram: se o
+  // alvo dele muda depois de montado (acontece ao voltar da versão simples,
+  // quando nada mais suspende), o drei recria a raiz vazia e a tela some.
+  const eventsConnected = useThree((s) => !!s.events.connected)
   useFrame((_, dt) => {
     if (!glassMat.current || !screenLight.current) return
     const lit = power === 'on' ? 1 : power === 'booting' ? 0.7 : power === 'warming' ? 1.4 : 0
@@ -223,7 +227,7 @@ export default function Computer() {
           o drei abre um "buraco" transparente no 3D do tamanho da tela. Assim
           a moldura, o post-it e o reflexo do vidro ficam por cima dela, como
           num monitor de verdade. Desligado, o vidro escuro volta a aparecer. */}
-      <Html
+      {eventsConnected && <Html
         transform
         occlude={power === 'off' ? false : 'blending'}
         position={[SCREEN.center.x, SCREEN.center.y, SCREEN.center.z + 0.0005]}
@@ -233,7 +237,7 @@ export default function Computer() {
         className="crt-html"
       >
         <CRTScreen />
-      </Html>
+      </Html>}
       {/* cantos arredondados do tubo, vinheta e reflexo, por cima da tela */}
       <mesh position={[SCREEN.center.x, SCREEN.center.y, SCREEN.center.z + 0.0015]} visible={power !== 'off'}>
         <planeGeometry args={[SCREEN.width + 0.002, SCREEN.height + 0.002]} />
