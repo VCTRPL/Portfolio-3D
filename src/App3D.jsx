@@ -1,4 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
+import './styles.css'
+import './screen/screen.css'
 import { RESUME_PDF } from './content'
 import { useStore } from './store'
 import ScreenSite from './screen/ScreenSite'

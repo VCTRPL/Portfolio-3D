@@ -1,55 +1,149 @@
-# Portfolio
-Portfolio - Victor Reis Silva de Paula
+# 🧑‍💻 Portfólio — Victor Reis Silva de Paula
 
-Um escritório em 3D à noite, com um computador retrô dos anos 80 em cima da mesa. Quando você liga o computador, o currículo aparece dentro da tela do monitor CRT como um site de verdade, que dá para clicar, rolar e usar.
+> Site de portfólio profissional, simples e responsivo, bilíngue (PT/EN), com seções **Sobre mim**, **Projetos** (linha do tempo), **Experiências** e **Contato** (formulário com envio por e-mail).
 
-Feito com [Three.js](https://threejs.org/), usando [React Three Fiber](https://r3f.docs.pmnd.rs/) e [drei](https://drei.docs.pmnd.rs/), com [Vite](https://vite.dev/) no build. O deploy é na Vercel.
+[![React](https://img.shields.io/badge/React-19.2-007ec6?style=for-the-badge&logo=react&logoColor=white)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-7-007ec6?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev)
+[![Vercel](https://img.shields.io/badge/Deploy-Vercel-000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
 
-## O que dá para fazer
+---
 
-- **Ligar/desligar o computador**: clique no monitor, no botão ⏻ do gabinete ou do monitor, ou no botão "ligar" do topo, com som de clique. A tela tem a animação de CRT ligando (linha branca abrindo), um boot estilo BIOS e o colapso num ponto quando desliga.
-- **Área de trabalho retrô**: depois do boot aparece o "VictorOS", com papel de parede de campo, barra de tarefas, menu iniciar e um único app: o **Portfólio**. Clique duas vezes nele para abrir o terminal do currículo numa janela.
-- **Usar o site dentro da janela**: tem abas, rolagem, os repositórios do GitHub carregados ao vivo e um shell interativo (`help`, `pdf`, `lampada`, `desligar`…). A tela fica de verdade atrás do vidro do monitor: a moldura, o post-it e o reflexo do vidro ficam por cima dela.
-- **Currículo em PDF**: abre pela folha em cima da mesa, pelo botão "currículo PDF" ou pelos links do site.
-- **Luminária**: clique nela para acender ou apagar (com som de interruptor).
-- **Teclado e mouse**: as teclas do teclado 3D afundam quando você digita, e o mouse acompanha o ponteiro e "clica".
-- **Cursor retrô** em pixel art (seta e mãozinha).
-- **Versão simples** (botão no topo ou `?simples` na URL): o mesmo site sem 3D. Ela também é usada automaticamente quando o navegador não tem WebGL. Sem aceleração de hardware, a cena 3D abre na qualidade mais baixa. No celular, depois que o computador liga, o site abre em tela cheia para ficar legível.
+## 📚 Índice
+- [Links Úteis](#-links-úteis)
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Funcionalidades Principais](#-funcionalidades-principais)
+- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
+- [Arquitetura](#-arquitetura)
+- [Instalação e Execução](#-instalação-e-execução)
+- [Deploy](#-deploy)
+- [Estrutura de Pastas](#-estrutura-de-pastas)
+- [Personalizando o conteúdo](#-personalizando-o-conteúdo)
+- [Demonstração](#-demonstração)
+- [Autor](#-autor)
 
-## Desempenho
+---
 
-A cena foi feita para rodar em qualquer computador:
+## 🔗 Links Úteis
+* 🌐 **Site publicado:** _adicione aqui o link da Vercel após o deploy_ (ex.: `https://portfolio-3d.vercel.app`)
+* 💻 **Repositório:** https://github.com/VCTRPL/Portfolio-3D
+* 🕹️ **Versão 3D (extra):** acrescente `?3d` à URL do site
 
-- só é redesenhada quando algo se mexe (câmera, mouse, teclas, liga/desliga). Parada, desenha um quadro por segundo, só para o relógio da parede;
-- sem pós-processamento: os brilhos (LEDs, lâmpada) são sprites leves;
-- sombras calculadas uma vez só, e desligadas em máquinas fracas e celulares, que também usam resolução 1x (`src/scene/quality.js`);
-- teclado e estante desenhados com `InstancedMesh` (poucas chamadas de desenho).
+---
 
-## Rodando localmente
+## 📝 Sobre o Projeto
+Portfólio criado para apresentar minha trajetória, habilidades, projetos e formas de contato de maneira moderna e acessível. Sou estudante de Engenharia de Software na PUC Minas e busco minha primeira oportunidade na área. O site foi feito como trabalho acadêmico de Desenvolvimento e Integração de Aplicações Web, com tema escuro, tipografia Inter e gradiente índigo → turquesa como identidade visual.
 
+## ✨ Funcionalidades Principais
+- 🧭 **Menu de navegação** fixo, com destaque da seção atual e menu "hambúrguer" no celular.
+- 🌎 **Português / English:** botão de idioma no topo e na seção "Sobre mim"; a escolha é lembrada.
+- 👤 **Sobre mim:** apresentação bilíngue, formação, competências, idiomas e objetivo.
+- 🗓️ **Projetos:** linha do tempo do mais antigo ao mais recente, com descrição, tecnologias, link do GitHub e imagem. Os repositórios públicos de `github.com/VCTRPL` entram automaticamente (API do GitHub).
+- 💼 **Experiências:** formação, projetos e vivências (empresa/instituição, atividade, período e descrição).
+- ✉️ **Contato:** ícones clicáveis (e-mail, WhatsApp, LinkedIn, GitHub) e formulário (nome, e-mail, mensagem) validado com React Hook Form e enviado por EmailJS.
+- ♿ Acessível: navegação por teclado, `aria-*`, "pular para o conteúdo" e respeito a `prefers-reduced-motion`.
+- 📱 Responsivo (testado de 360 px a desktop).
+
+---
+
+## 🛠 Tecnologias Utilizadas
+### 💻 Front-end
+* **Biblioteca:** React 19.2 (JavaScript ES6+)
+* **Build tool:** Vite 7
+* **Estilização:** CSS puro com variáveis (`src/site/site.css`)
+* **Formulário:** React Hook Form
+* **E-mail:** EmailJS (`@emailjs/browser`), direto do front-end
+* **Extra (versão 3D):** Three.js, React Three Fiber, drei, Zustand, maath
+
+### ⚙️ Infraestrutura
+* **Hospedagem:** Vercel (gratuita)
+* **Versionamento:** Git + GitHub
+
+### 📦 Dependências (`package.json`)
+| Pacote | Uso |
+| --- | --- |
+| `react`, `react-dom` | Interface |
+| `react-hook-form` | Validação do formulário |
+| `@emailjs/browser` | Envio de e-mail |
+| `three`, `@react-three/fiber`, `@react-three/drei`, `maath`, `zustand` | Versão 3D (`?3d`, carregada sob demanda) |
+| `vite`, `@vitejs/plugin-react` | Build e servidor de desenvolvimento (dev) |
+
+---
+
+## 🏗 Arquitetura
+Aplicação **single-page estática** (sem back-end próprio): os dados ficam em `src/site/data`, o idioma é controlado por um Context (`i18n.jsx`) e cada seção é um componente. Projetos = lista curada + repositórios do GitHub buscados no navegador (com cache de sessão e mensagem de erro caso o limite da API seja atingido). O e-mail é enviado pelo EmailJS sem servidor; sem configuração, o formulário cai para `mailto:`. A cena 3D é um chunk separado (`import()` dinâmico), então não pesa no site principal.
+
+---
+
+## 🔧 Instalação e Execução
+### Pré-requisitos
+* Node.js 18+ e npm
+
+### Variáveis de ambiente (envio de e-mail)
+1. Crie uma conta em [emailjs.com](https://www.emailjs.com), um *Email Service* e um *Template* que use `{{from_name}}`, `{{from_email}}`, `{{reply_to}}` e `{{message}}`.
+2. Copie `.env.example` para `.env` e preencha:
 ```bash
+VITE_EMAILJS_SERVICE_ID=service_xxxxxxx
+VITE_EMAILJS_TEMPLATE_ID=template_xxxxxxx
+VITE_EMAILJS_PUBLIC_KEY=xxxxxxxxxxxxxxxx
+```
+> A chave pública do EmailJS é feita para ficar no front-end. Ative restrição de domínio no painel deles.
+
+### Rodando
+```bash
+git clone https://github.com/VCTRPL/Portfolio-3D.git
+cd Portfolio-3D
 npm install
-npm run dev      # http://localhost:5173
-npm run build    # gera dist/
+npm run dev        # http://localhost:5173
+npm run build      # gera dist/
+npm run preview    # serve o build local
 ```
 
-## Estrutura
+---
 
+## 🚀 Deploy
+1. Em [vercel.com](https://vercel.com), **Add New → Project** e importe `VCTRPL/Portfolio-3D`.
+2. Framework: Vite (já definido em `vercel.json`). Em **Settings → Environment Variables** adicione as três variáveis `VITE_EMAILJS_*`.
+3. Deploy. Cada `git push` na `main` publica de novo automaticamente.
+4. Cole o link final na seção [Links Úteis](#-links-úteis).
+
+---
+
+## 📂 Estrutura de Pastas
 ```
-public/
-  Curriculo_Victor_Reis_Silva_de_Paula.pdf
-  cursors/            cursor retrô (seta / mão)
-  textures/resume.jpg prévia do PDF usada na folha em cima da mesa
-src/
-  content.js          todo o texto do currículo (site, shell e versão simples leem daqui)
-  store.js            estado: liga/desliga, foco da câmera, luminária
-  App.jsx             HUD, atalhos, versão simples / mobile
-  screen/             o site que roda dentro do monitor + efeitos de CRT
-  scene/              a cena 3D: Computer, Keyboard, Mouse, Lamp, Desk, Room, Props, CameraRig
+Portfolio-3D/
+├── public/
+│   ├── Curriculo_Victor_Reis_Silva_de_Paula.pdf
+│   ├── favicon.svg
+│   ├── projects/            # imagens/GIFs dos projetos
+│   ├── cursors/ textures/   # usados pela versão 3D
+├── src/
+│   ├── main.jsx             # entrada: site (padrão) ou 3D (?3d)
+│   ├── site/                # ⭐ site do portfólio
+│   │   ├── SiteApp.jsx
+│   │   ├── i18n.jsx         # idioma PT/EN + textos da interface
+│   │   ├── useGithubProjects.js
+│   │   ├── site.css
+│   │   ├── data/            # profile, projects, experiences, contacts
+│   │   └── components/      # Header, About, Projects, Experience, Contact, Footer…
+│   ├── App3D.jsx            # versão 3D (escritório retrô)
+│   ├── scene/ screen/       # cena 3D e site dentro do monitor
+│   └── content.js store.js sound.js webgl.js
+├── .env.example
+├── index.html
+├── vercel.json
+└── vite.config.js
 ```
 
-Para mudar algum texto do currículo, edite `src/content.js`. Para trocar o PDF, substitua o arquivo em `public/` e gere de novo a prévia (`pdftoppm -r 110 -jpeg -singlefile <pdf> public/textures/resume`).
+---
 
-### Sobre os modelos 3D
+## 🎨 Personalizando o conteúdo
+* **Textos / competências / idiomas:** `src/site/data/profile.js`
+* **Experiências:** `src/site/data/experiences.js`
+* **Projetos:** `src/site/data/projects.js` — coloque a imagem ou GIF em `public/projects/` e acrescente o objeto com nome, descrição, tecnologias, link do GitHub e `image`. Repositórios com o mesmo nome substituem a versão automática.
+* **Contatos:** `src/site/data/contacts.js`
 
-Todos os modelos (computador, teclado, mouse, luminária, móveis e o escritório) foram modelados em código, com a geometria do próprio Three.js, e as texturas são geradas num `<canvas>`. Nenhum arquivo de modelo é baixado, então a cena carrega rápido e não tem pendência de licença. Cada objeto é um componente separado em `src/scene/`. Para usar um modelo `.glb` de um site como Poly Pizza, Poly Haven ou Sketchfab, coloque o arquivo em `public/models/` e carregue com `useGLTF` no componente correspondente.
+## 🎥 Demonstração
+![Escritório 3D](public/projects/portfolio-3d.png)
+
+## 👤 Autor
+**Victor Reis Silva de Paula** — [GitHub](https://github.com/VCTRPL) · [LinkedIn](https://www.linkedin.com/in/victor-paula-3b6a603b3/) · victorrsdp@gmail.com
